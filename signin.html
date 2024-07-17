@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.3), rgba(0, 0, 0, 0.3));
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.5);
+            }
+        }
+
+        .signin-container {
+            background-color: rgba(43, 43, 43, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            z-index: 1;
+            position: relative;
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #8a2be2;
+        }
+
+        .input-group input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #8a2be2;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #8a2be2;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #7a24c9;
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #8a2be2;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="animation"></div>
+    <div class="stars">
+        <div class="star" style="top: 10%; left: 20%; animation-duration: 2s;"></div>
+        <div class="star" style="top: 40%; left: 60%; animation-duration: 3s;"></div>
+        <div class="star" style="top: 70%; left: 30%; animation-duration: 4s;"></div>
+        <div class="star" style="top: 80%; left: 80%; animation-duration: 5s;"></div>
+        <div class="star" style="top: 50%; left: 50%; animation-duration: 6s;"></div>
+    </div>
+    <div class="signin-container">
+        <h2>Sign In</h2>
+        <form action="#" method="post">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Sign In</button>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </form>
+    </div>
+</body>
+</html>
