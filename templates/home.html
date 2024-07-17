@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntervWAI</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.3), rgba(0, 0, 0, 0.3));
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.5);
+            }
+        }
+
+        .navbar {
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 10px 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: top 0.3s;
+        }
+
+        .navbar .logo a {
+            color: #8a2be2;
+            font-size: 1.5em;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar .logo a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .navbar a {
+            color: #8a2be2;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9em;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .content h1 {
+            font-size: 3em;
+            color: #8a2be2;
+            margin: 0;
+        }
+
+        .content p {
+            font-size: 1.2em;
+            color: #fff;
+            margin: 10px 0 20px;
+        }
+
+        .btn {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #8a2be2;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative; /* Ensure buttons have a relative position for starburst effect */
+        }
+
+        .btn:hover {
+            background-color: #7a24c9;
+        }
+
+        .rocket {
+            position: absolute;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 200px;
+            background: url('static/rocket.png') no-repeat center/contain;
+            z-index: 4;
+            animation: rocketLaunch 3s ease-in-out forwards;
+        }
+
+        .gate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .gate-left, .gate-right {
+            width: 50%;
+            height: 100%;
+            background: rgba(43, 3, 63, 0.9); /* Blackish purple color */
+            position: absolute;
+        }
+
+        .gate-left {
+            left: 0;
+            animation: gateSlideLeft 3s ease-in-out forwards;
+        }
+
+        .gate-right {
+            right: 0;
+            animation: gateSlideRight 3s ease-in-out forwards;
+        }
+
+        @keyframes rocketLaunch {
+            0% {
+                bottom: -200px;
+                opacity: 0;
+            }
+            50% {
+                bottom: 50%;
+                opacity: 1;
+            }
+            100% {
+                bottom: 100%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes gateSlideLeft {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes gateSlideRight {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        .starburst {
+            position: absolute;
+            background: white;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: starburst 0.5s ease-out forwards;
+            pointer-events: none; /* Prevents interfering with button clicks */
+            z-index: 10;
+        }
+
+        @keyframes starburst {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(5) translate(100px, 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animation"></div>
+    <div class="stars">
+        <div class="star" style="top: 10%; left: 20%; animation-duration: 2s;"></div>
+        <div class="star" style="top: 40%; left: 60%; animation-duration: 3s;"></div>
+        <div class="star" style="top: 70%; left: 30%; animation-duration: 4s;"></div>
+        <div class="star" style="top: 80%; left: 80%; animation-duration: 5s;"></div>
+        <div class="star" style="top: 50%; left: 50%; animation-duration: 6s;"></div>
+    </div>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="#">IntervWAI</a>
+        </div>
+        <div>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+    <div class="rocket"></div>
+    <div class="gate">
+        <div class="gate-left"></div>
+        <div class="gate-right"></div>
+    </div>
+    <div class="content">
+        <div>
+            <h1>Welcome to IntervWAI</h1>
+            <p>Your AI-Powered Interview Assistant</p>
+            <button class="btn" onclick="startInterview()">Start Interview</button>
+            <button class="btn" onclick="location.href='{{url_for('askAns')}}'">Ask for Best Answers</button>
+<!--            <button class="btn" onclick="location.href='{{url_for('chatbot')}}'">Submit Written Answers</button>-->
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const gate = document.querySelector(".gate");
+            gate.addEventListener("animationend", () => {
+                gate.style.display = "none";
+            });
+        });
+
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                createStarburst(event.clientX, event.clientY);
+            });
+        });
+
+        function createStarburst(x, y) {
+            const starCount = 20;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'starburst';
+                document.body.appendChild(star);
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 100;
+                const offsetX = Math.cos(angle) * distance;
+                const offsetY = Math.sin(angle) * distance;
+
+                star.style.left = `${x + offsetX}px`;
+                star.style.top = `${y + offsetY}px`;
+                star.style.animationDuration = `${0.3 + Math.random() * 0.2}s`;
+                star.style.animationDelay = `${Math.random() * 0.1}s`;
+                star.addEventListener('animationend', () => {
+                    star.remove();
+                });
+            }
+        }
+
+        function startInterview() {
+            location.href = "{{url_for('sI')}}";
+        }
+    </script>
+</body>
+</html>

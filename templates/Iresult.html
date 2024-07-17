@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Final Result</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .results-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .results-container h1 {
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+
+        .evaluation-report {
+            margin: 15px 0;
+            color: #fff;
+            font-style: italic;
+            text-align: left;
+        }
+
+        .final-result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #FFD700;
+        }
+
+        .evaluation-section {
+            margin-bottom: 20px;
+        }
+
+        .evaluation-title {
+            font-size: 1.2em;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .evaluation-text {
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .highlight {
+            color: #8a2be2;
+        }
+    </style>
+</head>
+<body>
+    <div class="results-container">
+        <h1>Interview Final Result</h1>
+        <div id="evaluation-report" class="evaluation-report"></div>
+        <div id="final-result" class="final-result"></div>
+    </div>
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        let responses = queryParams.get('responses');
+
+        try {
+            responses = JSON.parse(responses);
+        } catch (error) {
+            console.error('Failed to parse responses:', error);
+            responses = [];
+        }
+        function calculateFinalResult() {
+            let totalRating = 0;
+            let responseCount = 0;
+            let combinedEvaluation = '';
+            responses.slice(1).forEach((response) => {
+                combinedEvaluation += response.evaluation.replace(/(\*\*|##|#\*)/g, (match) => {
+                    switch (match) {
+                        case '**':
+                            return '</span>';
+                        case '##':
+                            return '</p><p>';
+                        case '#*':
+                            return '<span class="highlight">';
+                        default:
+                            return '';
+                    }
+                }) + ' ';
+                const rating = response.rating;
+                switch (rating) {
+                    case 'Excellent':
+                        totalRating += 4;
+                        break;
+                    case 'Good':
+                        totalRating += 3;
+                        break;
+                    case 'Average':
+                        totalRating += 2;
+                        break;
+                    case 'Poor':
+                        totalRating += 1;
+                        break;
+                }
+                responseCount++;
+            });
+
+            const averageRating = totalRating / responseCount;
+
+            let finalResult;
+            if (averageRating >= 3.5) {
+                finalResult = 'Outstanding';
+            } else if (averageRating >= 2.5) {
+                finalResult = 'Very Good';
+            } else if (averageRating >= 1.5) {
+                finalResult = 'Satisfactory';
+            } else {
+                finalResult = 'Needs Improvement';
+            }
+
+            return { finalResult, combinedEvaluation };
+        }
+        const { finalResult, combinedEvaluation } = calculateFinalResult();
+        document.getElementById('evaluation-report').innerHTML = `
+            <div class="evaluation-section">
+                <div class="evaluation-title">Overall Evaluation:</div>
+                <div class="evaluation-text"><p>${combinedEvaluation}</p></div>
+            </div>`;
+        document.getElementById('final-result').textContent = `Final Result: ${finalResult}`;
+    </script>
+</body>
+</html>
