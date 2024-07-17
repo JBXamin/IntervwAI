@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-box {
+            width: 90%;
+            max-width: 600px;
+            background: #282c34;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            height: 70vh;
+            margin-bottom: 20px;
+        }
+
+        .chat-message {
+            margin: 10px 0;
+        }
+
+        .chat-message.user {
+            text-align: right;
+        }
+
+        .chat-message.ai {
+            text-align: left;
+            color: #8a2be2;
+        }
+
+        .mic-button {
+            background-color: #8a2be2;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .mic-button:hover {
+            background-color: #7a24c9;
+        }
+
+        .mic-button:active {
+            background-color: #5a1ca9;
+        }
+
+        .mic-button-listening {
+            background-color: #ff4c4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-box" id="chatBox">
+
+    </div>
+    <button class="mic-button" id="micButton">🎤</button>
+
+    <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    const micButton = document.getElementById('micButton');
+    const chatBox = document.getElementById('chatBox');
+
+    let isListening = false;
+    let conversationHistory = [];
+    let questionCount = 0;
+
+    const startConversation = async () => {
+        const initialResponse = await getAiResponse("Hello, start the conversation directly by starting an interview in which you will be the interviewer and I am going to be the employee. Ask me questions one by one.");
+        addMessageToChatBox('ai', initialResponse.response);
+        speak(initialResponse.response, handleSpeechRecognition);
+    };
+
+    const handleSpeechRecognition = () => {
+        recognition.start();
+        micButton.classList.add('mic-button-listening');
+    };
+
+    recognition.onresult = async (event) => {
+        const userSpeech = event.results[0][0].transcript;
+        addMessageToChatBox('user', userSpeech);
+        conversationHistory.push({ speaker: 'user', message: userSpeech });
+
+        const aiResponse = await getAiResponse(userSpeech);
+        addMessageToChatBox('ai', aiResponse.response);  // Accessing only the response part
+        conversationHistory.push({ speaker: 'ai', message: aiResponse.response });
+        if (aiResponse.redirect) {
+            window.location.href = aiResponse.redirect;
+        } else {
+            speak(aiResponse.response, handleSpeechRecognition);  // Accessing only the response part
+        }
+    };
+
+    recognition.onend = () => {
+        micButton.classList.remove('mic-button-listening');
+        isListening = false;
+    };
+
+    function addMessageToChatBox(sender, message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `chat-message ${sender}`;
+        messageElement.textContent = message;
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function getAiResponse(userSpeech) {
+        const history = conversationHistory.map(entry => `${entry.speaker}: ${entry.message}`).join('\n');
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: `${history}\nuser: ${userSpeech}` })
+        });
+
+        const data = await response.json();
+        return data;
+    }
+
+    function speak(message, callback) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'en-US';
+        utterance.onend = () => {
+            callback();
+        };
+        window.speechSynthesis.speak(utterance);
+    }
+    window.onload = () => {
+        startConversation();
+    };
+</script>
+
+</body>
+</html>
