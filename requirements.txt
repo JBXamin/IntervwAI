@@ -19,3 +19,4 @@ pyttsx3~=2.90
 PyAudio~=0.2.14
 transformers~=4.41.2
 speech~=0.5.2
+torch~=2.3.0
