@@ -11,10 +11,20 @@ CORS(app)
 url = 'https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json'
 response = requests.get(url)
 
-with open('your-file.json', 'wb') as file:
-    file.write(response.content)
+if response.status_code == 200:
+    # Save the file locally
+    with open('hopeful-vim-415417-e04ec2f3bad8.json', 'wb') as file:
+        file.write(response.content)
 
-SERVICE_ACCOUNT_FILE = 'your-file.json'
+    # Now you can use the local file path in your code
+    SERVICE_ACCOUNT_FILE = 'hopeful-vim-415417-e04ec2f3bad8.json'
+
+    # Example: Load the JSON data
+    with open(SERVICE_ACCOUNT_FILE, 'r') as json_file:
+        data = json.load(json_file)
+        print(data)
+else:
+    print(f"Failed to download the file: {response.status_code}")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
