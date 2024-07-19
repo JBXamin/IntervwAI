@@ -8,6 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 SERVICE_ACCOUNT_FILE = os.environ["service_acc_file"]
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 API_KEY = os.environ["api_key"]
 genai.api_key = API_KEY
