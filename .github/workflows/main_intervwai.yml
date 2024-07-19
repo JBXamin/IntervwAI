@@ -12,7 +12,6 @@ on:
 
 env:
   api_key: ${{secrets.API_KEY}}
-  service_acc_file: ${{secrets.SERVICE_ACCOUNT_FILE}}
 
 jobs:
   build:
@@ -46,6 +45,11 @@ jobs:
           path: |
             release.zip
             !venv/
+
+      - name: Decrypt large secret
+        run: ./decrypt_secret.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
 
   deploy:
     runs-on: ubuntu-latest
