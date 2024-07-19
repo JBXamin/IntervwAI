@@ -7,7 +7,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-SERVICE_ACCOUNT_FILE = 'https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json'
+url = 'https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json'
+response = requests.get(url)
+
+with open('your-file.json', 'wb') as file:
+    file.write(response.content)
+
+SERVICE_ACCOUNT_FILE = 'your-file.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
