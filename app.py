@@ -7,15 +7,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-SERVICE_ACCOUNT_FILE = 'https://github.com/JBXamin/IntervwAI/blob/main/secrets.py'
+SERVICE_ACCOUNT_FILE = 'https://github.com/JBXamin/IntervwAI/blob/main/secrets.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
 # Check if the API key environment variable is set
-if "api_ky" not in os.environ:
-    raise KeyError("API key environment variable 'api_ky' is not set.")
+# if "api_ky" not in os.environ:
+#     raise KeyError("API key environment variable 'api_ky' is not set.")
 
-API_KEYY = os.getenv("api_ky", "default_value_if_not_set")
+API_KEYY = 'AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik'
 genai.api_key = API_KEYY
 
 conversation_history = []
