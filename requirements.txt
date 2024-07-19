@@ -12,6 +12,7 @@ gunicorn==21.2.0
 google-auth-oauthlib==1.2.0
 google-api-python-client==2.125.0
 google==3.0.0
+google-generativeai==0.5.4
 Bootstrap_Flask==2.2.0
 Flask_Login==0.6.3
 Flask-Gravatar==0.5.0
