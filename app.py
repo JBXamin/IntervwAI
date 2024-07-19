@@ -10,7 +10,7 @@ CORS(app)
 SERVICE_ACCOUNT_FILE = 'https://github.com/JBXamin/IntervwAI/blob/main/secrets.py'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
-API_KEY = os.environ["api_key"]
+API_KEY = os.environ["api_ky"]
 genai.api_key = API_KEY
 
 conversation_history = []
