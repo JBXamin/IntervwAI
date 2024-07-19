@@ -3,6 +3,7 @@ import os
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app)
