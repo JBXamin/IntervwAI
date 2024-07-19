@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-SERVICE_ACCOUNT_FILE = 'https://github.com/JBXamin/IntervwAI/blob/main/secrets.json'
+SERVICE_ACCOUNT_FILE = 'https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
