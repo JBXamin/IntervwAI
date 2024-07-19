@@ -24,3 +24,4 @@ ipython~=8.25.0
 pyttsx3~=2.90
 transformers~=4.41.2
 speech~=0.5.2
+requests==2.32.3
