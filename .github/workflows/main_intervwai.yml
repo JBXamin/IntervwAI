@@ -46,11 +46,6 @@ jobs:
             release.zip
             !venv/
 
-      - name: Decrypt large secret
-        run: ./decrypt_secret.sh
-        env:
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
