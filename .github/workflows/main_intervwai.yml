@@ -26,6 +26,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
         
+      # Fetch the secrets.json file
+      - name: Download secrets.json
+        run: curl -o secrets.json https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
@@ -46,7 +50,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -64,13 +68,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A7118CE4931D40A59D6833A5FFC8CEB2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_96DB31F2DC8B4DF7ACE6DC4994CFF63A }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'intervwai'
           slot-name: 'Production'
-
-      - name: Set environment variables
-        run: |
-          echo "api_ky=${{ secrets.API_KEY }}" >> $GITHUB_ENV
