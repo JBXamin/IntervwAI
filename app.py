@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-SERVICE_ACCOUNT_FILE = os.environ["service_acc_file"]
+SERVICE_ACCOUNT_FILE = os.environ["LARGE_SECRET_PASSPHRASE"]
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 API_KEY = os.environ["api_key"]
