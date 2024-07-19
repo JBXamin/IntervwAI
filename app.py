@@ -7,10 +7,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-SERVICE_ACCOUNT_FILE = 'C:\\users\\jites\\Downloads\\hopeful-vim-415417-e04ec2f3bad8.json'
+SERVICE_ACCOUNT_FILE = os.environ["service_acc_file"]
 qsns = 0
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
-API_KEY = 'AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik'
+API_KEY = os.environ["api_key"]
 genai.api_key = API_KEY
 
 conversation_history = []
