@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  api_key: ${{secrets.API_KEY}}
+  api_ky: ${{secrets.API_KEY}}
   service_acc_file: ${{secrets.SERVICE_ACCOUNT_FILE}}
 
 jobs:
