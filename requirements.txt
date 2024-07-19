@@ -11,7 +11,6 @@ Werkzeug==3.0.2
 SQLAlchemy==2.0.25
 gunicorn==21.2.0
 cors==1.0.1
-genai==2.1.0
 google==3.0.0
 google-ai-generativelanguage==0.6.4
 google-api-core==2.19.0
