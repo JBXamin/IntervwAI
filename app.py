@@ -10,8 +10,13 @@ CORS(app)
 SERVICE_ACCOUNT_FILE = 'https://github.com/JBXamin/IntervwAI/blob/main/secrets.py'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
-API_KEY = os.environ["api_ky"]
-genai.api_key = API_KEY
+
+# Check if the API key environment variable is set
+if "api_ky" not in os.environ:
+    raise KeyError("API key environment variable 'api_ky' is not set.")
+
+API_KEYY = os.getenv("api_ky", "default_value_if_not_set")
+genai.api_key = API_KEYY
 
 conversation_history = []
 responses = []
@@ -24,7 +29,6 @@ questions = [
     "Describe a time when you demonstrated leadership."
 ]
 
-
 def generate_response(query):
     global conversation_history
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -36,7 +40,6 @@ def generate_response(query):
     conversation_history.append(f"ai: {text_content}")
 
     return text_content
-
 
 def evaluate_answer(question, answer):
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -54,7 +57,6 @@ def evaluate_answer(question, answer):
         rating = "Poor"
 
     return rating, evaluation_text
-
 
 @app.route('/api/gemini', methods=['POST'])
 def gemini():
@@ -97,36 +99,29 @@ def gemini():
     except Exception as e:
         return jsonify({'response': f'Error: {str(e)}'}), 500
 
-
 @app.route('/')
 def home():
     return render_template('home.html')
-
 
 @app.route('/login')
 def login():
     return render_template('signin.html')
 
-
 @app.route('/register')
 def signup():
     return render_template('signup.html')
-
 
 @app.route('/chatbot')
 def chatbot():
     return render_template('chatbot.html')
 
-
 @app.route('/askAns')
 def askAns():
     return render_template('askAns.html')
 
-
 @app.route('/startInterview')
 def sI():
     return render_template('sI.html')
-
 
 @app.route('/result')
 def result():
@@ -137,7 +132,6 @@ def result():
         responses = []
     print(f"Responses received: {responses}")  # Debug statement
     return render_template('Iresult.html', responses=responses)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
