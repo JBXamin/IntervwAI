@@ -3,23 +3,20 @@ import os
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
-import requests
 
 app = Flask(__name__)
 CORS(app)
 
-
-SERVICE_ACCOUNT_FILE = 'secrets.json'
+SERVICE_ACCOUNT_FILE = 'credentials.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
+
+# Set your API key
+API_KEY = os.getenv('API_KEY')
+if not API_KEY:
+    raise KeyError("API key environment variable 'API_KEY' is not set.")
+genai.api_key = API_KEY
+
 qsns = 0
-
-# Check if the API key environment variable is set
-# if "api_ky" not in os.environ:
-#     raise KeyError("API key environment variable 'api_ky' is not set.")
-
-API_KEYY = 'AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik'
-genai.api_key = API_KEYY
-
 conversation_history = []
 responses = []
 
