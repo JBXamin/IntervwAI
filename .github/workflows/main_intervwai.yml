@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python app to Azure Web App - intervwai
 
 on:
@@ -29,8 +25,13 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+
+      - name: Set up Google Application Credentials
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > credentials.json
+
+      - name: Set up API key environment variable
+        run: echo "API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GITHUB_ENV
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -61,13 +62,12 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7B7009C57C1644DAB18362D78A595FE5 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B37C9386A45045F79FE354178E2B5DA0 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0FA1BEEECEC242A6AE4CD52DBF0F42D7 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_22A84D2E451C4FF1944913B6ED5CD6D8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_29B208415F6B4A278DA7FCBE7C3D2566 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CF3C7A7F683941CF96D9B0CDCE675884 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -75,4 +75,3 @@ jobs:
         with:
           app-name: 'intervwai'
           slot-name: 'Production'
-          
