@@ -29,9 +29,11 @@ jobs:
       - name: Set up Google Application Credentials
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > credentials.json
+          python -m json.tool < credentials.json > formatted_credentials.json
+          mv formatted_credentials.json credentials.json
 
       - name: Set up API key environment variable
-        run: echo "API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GITHUB_ENV
+        run: echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -51,7 +53,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -65,11 +67,11 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_22A84D2E451C4FF1944913B6ED5CD6D8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_29B208415F6B4A278DA7FCBE7C3D2566 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CF3C7A7F683941CF96D9B0CDCE675884 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
