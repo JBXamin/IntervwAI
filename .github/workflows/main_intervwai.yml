@@ -27,13 +27,15 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Set up Google Application Credentials
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > credentials.json
+          echo "$GOOGLE_APPLICATION_CREDENTIALS" > credentials.json
           python -m json.tool < credentials.json > formatted_credentials.json
           mv formatted_credentials.json credentials.json
 
       - name: Set up API key environment variable
-        run: echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+        run: echo "API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GITHUB_ENV
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
