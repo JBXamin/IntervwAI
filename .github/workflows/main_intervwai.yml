@@ -31,8 +31,10 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Set up Google Application Credentials
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > credentials.json
+          echo "$GOOGLE_APPLICATION_CREDENTIALS" > credentials.json
           python -m json.tool < credentials.json > formatted_credentials.json
           mv formatted_credentials.json credentials.json
 
