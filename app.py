@@ -9,12 +9,7 @@ CORS(app)
 
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
-
-# Set your API key
-API_KEY = os.getenv('API_KEY')
-if not API_KEY:
-    raise KeyError("API key environment variable 'API_KEY' is not set.")
-genai.api_key = API_KEY
+genai.api_key = 'AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik'
 
 qsns = 0
 conversation_history = []
