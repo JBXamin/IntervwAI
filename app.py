@@ -7,9 +7,12 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Set the path to the credentials.json file
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
-genai.api_key = 'AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik'
+
+# Set the API key from the environment variable
+genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
 
 qsns = 0
 conversation_history = []
