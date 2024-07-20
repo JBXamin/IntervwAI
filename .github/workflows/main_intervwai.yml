@@ -35,6 +35,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > credentials.json
+          cat credentials.json # Print the content for debugging
           python -m json.tool < credentials.json > formatted_credentials.json
           mv formatted_credentials.json credentials.json
 
