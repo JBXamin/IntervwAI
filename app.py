@@ -8,23 +8,8 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-url = 'https://raw.githubusercontent.com/JBXamin/IntervwAI/main/secrets.json'
-response = requests.get(url)
 
-if response.status_code == 200:
-    # Save the file locally
-    with open('hopeful-vim-415417-e04ec2f3bad8.json', 'wb') as file:
-        file.write(response.content)
-
-    # Now you can use the local file path in your code
-    SERVICE_ACCOUNT_FILE = 'hopeful-vim-415417-e04ec2f3bad8.json'
-
-    # Example: Load the JSON data
-    with open(SERVICE_ACCOUNT_FILE, 'r') as json_file:
-        data = json.load(json_file)
-        print(data)
-else:
-    print(f"Failed to download the file: {response.status_code}")
+SERVICE_ACCOUNT_FILE = '/secrets.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
