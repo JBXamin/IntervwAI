@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-SERVICE_ACCOUNT_FILE = '/secrets.json'
+SERVICE_ACCOUNT_FILE = 'secrets.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 qsns = 0
 
