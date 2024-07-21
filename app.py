@@ -136,7 +136,11 @@ def sI():
 @app.route('/iresult/<session_id>')
 def iresult(session_id):
     responses = interview_results.get(session_id, [])
-    return render_template('iresult.html', responses=responses)
+    try:
+        responses = json.loads(responses)
+    except json.JSONDecodeError:
+        responses = []
+    return render_template('Iresult.html', responses=responses)
 
 
 if __name__ == '__main__':
