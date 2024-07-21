@@ -3,16 +3,21 @@ import os
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
+
 # Set the path to the credentials.json file
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
+
 # Set the API key from the environment variable
 genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
+
 qsns = 0
 conversation_history = []
 responses = []
+
 questions = [
     "What is your greatest strength?",
     "Why do you want to work here?",
@@ -24,8 +29,10 @@ questions = [
 def generate_response(query):
     global conversation_history
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
     current_conversation = "\n".join(conversation_history[-2:] + [f"user: {query}"])
     response = model.generate_content(current_conversation)
+
     text_content = response.candidates[0].content.parts[0].text
     conversation_history.append(f"ai: {text_content}")
 
@@ -36,6 +43,7 @@ def evaluate_answer(question, answer):
     prompt = (f"Question: {question}\nAnswer: {answer}\nEvaluate the above answer as an interview response. Provide a "
               f"rating (Excellent, Good, Average, Poor) and explain why.")
     evaluation = model.generate_content(prompt)
+
     evaluation_text = evaluation.candidates[0].content.parts[0].text
     rating = "Average"
     if "Excellent" in evaluation_text:
@@ -52,8 +60,10 @@ def gemini():
     global qsns, responses, conversation_history
     data = request.json
     user_message = data.get('message', '')
+
     if not user_message:
         return jsonify({'response': 'No message provided'}), 400
+
     try:
         current_question = questions[qsns]
         conversation_history.append(f"ai: {current_question}")
