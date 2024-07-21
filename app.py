@@ -1,15 +1,15 @@
 import json
 import os
-from uuid import uuid4
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
+from uuid import uuid4
 
 app = Flask(__name__)
 CORS(app)
 
 # Set the path to the credentials.json file
-SERVICE_ACCOUNT_FILE = 'credentials.json'
+SERVICE_ACCOUNT_FILE = 'credentials.json'  # Update with the correct path
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 
 # Set the API key from the environment variable
@@ -101,7 +101,7 @@ def gemini():
 
         return jsonify({'response': ai_response})
     except Exception as e:
-        return jsonify({'response': f'Error: {str(e)}'}), 500
+        return jsonify({'response': f'Error: {str(e)}')}), 500
 
 
 @app.route('/')
@@ -137,6 +137,10 @@ def sI():
 @app.route('/iresult/<session_id>')
 def iresult(session_id):
     responses = interview_results.get(session_id, [])
+    try:
+        responses = json.loads(responses)
+    except json.JSONDecodeError:
+        responses = []
     return render_template('Iresult.html', responses=responses)
 
 
