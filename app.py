@@ -1,5 +1,6 @@
 import json
 import os
+from uuid import uuid4
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
@@ -136,10 +137,6 @@ def sI():
 @app.route('/iresult/<session_id>')
 def iresult(session_id):
     responses = interview_results.get(session_id, [])
-    try:
-        responses = json.loads(responses)
-    except json.JSONDecodeError:
-        responses = []
     return render_template('Iresult.html', responses=responses)
 
 
