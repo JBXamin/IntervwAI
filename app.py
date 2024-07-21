@@ -32,33 +32,39 @@ interview_results = {}
 
 def generate_response(query):
     global conversation_history
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        current_conversation = "\n".join(conversation_history[-2:] + [f"user: {query}"])
+        response = model.generate_content(current_conversation)
 
-    current_conversation = "\n".join(conversation_history[-2:] + [f"user: {query}"])
-    response = model.generate_content(current_conversation)
+        text_content = response.candidates[0].content.parts[0].text
+        conversation_history.append(f"ai: {text_content}")
 
-    text_content = response.candidates[0].content.parts[0].text
-    conversation_history.append(f"ai: {text_content}")
-
-    return text_content
-
+        return text_content
+    except Exception as e:
+        print(f"Error generating response: {str(e)}")
+        raise e
 
 def evaluate_answer(question, answer):
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
-    prompt = (f"Question: {question}\nAnswer: {answer}\nEvaluate the above answer as an interview response. Provide a "
-              f"rating (Excellent, Good, Average, Poor) and explain why.")
-    evaluation = model.generate_content(prompt)
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        prompt = (f"Question: {question}\nAnswer: {answer}\nEvaluate the above answer as an interview response. Provide a "
+                  f"rating (Excellent, Good, Average, Poor) and explain why.")
+        evaluation = model.generate_content(prompt)
 
-    evaluation_text = evaluation.candidates[0].content.parts[0].text
-    rating = "Average"
-    if "Excellent" in evaluation_text:
-        rating = "Excellent"
-    elif "Good" in evaluation_text:
-        rating = "Good"
-    elif "Poor" in evaluation_text:
-        rating = "Poor"
+        evaluation_text = evaluation.candidates[0].content.parts[0].text
+        rating = "Average"
+        if "Excellent" in evaluation_text:
+            rating = "Excellent"
+        elif "Good" in evaluation_text:
+            rating = "Good"
+        elif "Poor" in evaluation_text:
+            rating = "Poor"
 
-    return rating, evaluation_text
+        return rating, evaluation_text
+    except Exception as e:
+        print(f"Error evaluating answer: {str(e)}")
+        raise e
 
 
 @app.route('/api/gemini', methods=['POST'])
@@ -101,7 +107,8 @@ def gemini():
 
         return jsonify({'response': ai_response})
     except Exception as e:
-        return jsonify({'response': f'Error: {str(e)}')}), 500
+        print(f"Error in /api/gemini route: {str(e)}")
+        return jsonify({'response': f'Error: {str(e)}'}), 500
 
 
 @app.route('/')
