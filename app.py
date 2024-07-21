@@ -26,6 +26,9 @@ questions = [
     "Describe a time when you demonstrated leadership."
 ]
 
+interview_results = {}
+
+
 def generate_response(query):
     global conversation_history
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -37,6 +40,7 @@ def generate_response(query):
     conversation_history.append(f"ai: {text_content}")
 
     return text_content
+
 
 def evaluate_answer(question, answer):
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -54,6 +58,7 @@ def evaluate_answer(question, answer):
         rating = "Poor"
 
     return rating, evaluation_text
+
 
 @app.route('/api/gemini', methods=['POST'])
 def gemini():
@@ -81,54 +86,58 @@ def gemini():
 
         qsns += 1
         if qsns >= 3:
-            redirect_url = url_for('result', responses=json.dumps(responses))
+            session_id = str(uuid4())
+            interview_results[session_id] = responses.copy()
             qsns = 0
             conversation_history.clear()
             responses.clear()
-
             return jsonify({
                 'response': ai_response,
-                'redirect': redirect_url
+                'redirect': url_for('iresult', session_id=session_id)
             })
+
         conversation_history = conversation_history[-1:]
 
         return jsonify({'response': ai_response})
     except Exception as e:
         return jsonify({'response': f'Error: {str(e)}'}), 500
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/login')
 def login():
     return render_template('signin.html')
 
+
 @app.route('/register')
 def signup():
     return render_template('signup.html')
+
 
 @app.route('/chatbot')
 def chatbot():
     return render_template('chatbot.html')
 
+
 @app.route('/askAns')
 def askAns():
     return render_template('askAns.html')
+
 
 @app.route('/startInterview')
 def sI():
     return render_template('sI.html')
 
-@app.route('/result')
-def result():
-    responses = request.args.get('responses', '[]')
-    try:
-        responses = json.loads(responses)
-    except json.JSONDecodeError:
-        responses = []
-    print(f"Responses received: {responses}")  # Debug statement
-    return render_template('Iresult.html', responses=responses)
+
+@app.route('/iresult/<session_id>')
+def iresult(session_id):
+    responses = interview_results.get(session_id, [])
+    return render_template('iresult.html', responses=responses)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
