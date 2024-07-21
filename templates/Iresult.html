@@ -16,7 +16,6 @@
             height: 100vh;
             overflow: hidden;
         }
-
         .results-container {
             background-color: #333;
             padding: 20px;
@@ -28,44 +27,36 @@
             overflow-y: auto;
             text-align: center;
         }
-
         .results-container h1 {
             color: #8a2be2;
             margin-bottom: 20px;
         }
-
         .evaluation-report {
             margin: 15px 0;
             color: #fff;
             font-style: italic;
             text-align: left;
         }
-
         .final-result {
             font-size: 1.5em;
             margin-top: 20px;
             color: #FFD700;
         }
-
         .evaluation-section {
             margin-bottom: 20px;
         }
-
         .evaluation-title {
             font-size: 1.2em;
             color: #FFD700;
             margin-bottom: 10px;
         }
-
         .evaluation-text {
             font-size: 1em;
             line-height: 1.5;
         }
-
         .bold {
             font-weight: bold;
         }
-
         .highlight {
             color: #8a2be2;
         }
@@ -78,14 +69,20 @@
         <div id="final-result" class="final-result"></div>
     </div>
     <script>
-        const responses = {{ responses|tojson }};
+        const queryParams = new URLSearchParams(window.location.search);
+        let responses = queryParams.get('responses');
 
-        if (responses.length > 1) {
+        try {
+            responses = JSON.parse(responses);
+        } catch (error) {
+            console.error('Failed to parse responses:', error);
+            responses = [];
+        }
+        function calculateFinalResult() {
             let totalRating = 0;
             let responseCount = 0;
             let combinedEvaluation = '';
-
-            responses.slice(1).forEach(response => {
+            responses.slice(1).forEach((response) => {
                 combinedEvaluation += response.evaluation.replace(/(\*\*|##|#\*)/g, (match) => {
                     switch (match) {
                         case '**':
@@ -117,6 +114,7 @@
             });
 
             const averageRating = totalRating / responseCount;
+
             let finalResult;
             if (averageRating >= 3.5) {
                 finalResult = 'Outstanding';
@@ -128,15 +126,15 @@
                 finalResult = 'Needs Improvement';
             }
 
-            document.getElementById('evaluation-report').innerHTML = `
-                <div class="evaluation-section">
-                    <div class="evaluation-title">Overall Evaluation:</div>
-                    <div class="evaluation-text"><p>${combinedEvaluation}</p></div>
-                </div>`;
-            document.getElementById('final-result').textContent = `Final Result: ${finalResult}`;
-        } else {
-            document.getElementById('evaluation-report').innerHTML = '<p>No responses found.</p>';
+            return { finalResult, combinedEvaluation };
         }
+        const { finalResult, combinedEvaluation } = calculateFinalResult();
+        document.getElementById('evaluation-report').innerHTML = `
+            <div class="evaluation-section">
+                <div class="evaluation-title">Overall Evaluation:</div>
+                <div class="evaluation-text"><p>${combinedEvaluation}</p></div>
+            </div>`;
+        document.getElementById('final-result').textContent = `Final Result: ${finalResult}`;
     </script>
 </body>
 </html>
