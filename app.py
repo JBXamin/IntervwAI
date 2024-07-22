@@ -100,7 +100,7 @@ def gemini():
         print(f"Response stored: {response_entry}")  # Debug statement
 
         qsns += 1
-        if qsns >= 3:
+        if qsns >= 11:
             session_id = str(uuid4())
             interview_results[session_id] = responses.copy()
             qsns = 0
