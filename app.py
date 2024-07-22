@@ -35,14 +35,7 @@ except DefaultCredentialsError as e:
 qsns = 0
 conversation_history = []
 responses = []
-
-questions = [
-    "What is your greatest strength?",
-    "Why do you want to work here?",
-    "Tell me about a challenge you faced and how you overcame it.",
-    "How do you handle stress and pressure?",
-    "Describe a time when you demonstrated leadership."
-]
+generated_questions = []
 
 interview_results = {}
 
@@ -77,7 +70,7 @@ def evaluate_answer(question, answer):
 
 @app.route('/api/gemini', methods=['POST'])
 def gemini():
-    global qsns, responses, conversation_history
+    global qsns, responses, conversation_history, generated_questions
     data = request.json
     user_message = data.get('message', '')
 
@@ -85,10 +78,11 @@ def gemini():
         return jsonify({'response': 'No message provided'}), 400
 
     try:
-        if qsns < len(questions):
-            current_question = questions[qsns]
+        if qsns < len(generated_questions):
+            current_question = generated_questions[qsns]
         else:
-            current_question = questions[0]
+            current_question = generate_response(user_message)
+            generated_questions.append(current_question)
 
         conversation_history.append(f"ai: {current_question}")
         ai_response = generate_response(user_message)
@@ -104,12 +98,13 @@ def gemini():
         print(f"Response stored: {response_entry}")  # Debug statement
 
         qsns += 1
-        if qsns >= len(questions):
+        if qsns >= len(generated_questions):
             session_id = str(uuid4())
             interview_results[session_id] = responses.copy()
             qsns = 0
             conversation_history.clear()
             responses.clear()
+            generated_questions.clear()
             redirect_url = url_for('result', session_id=session_id)
 
             return jsonify({
