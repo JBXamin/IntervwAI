@@ -71,9 +71,7 @@
     </style>
 </head>
 <body>
-    <div class="chat-box" id="chatBox">
-
-    </div>
+    <div class="chat-box" id="chatBox"></div>
     <button class="mic-button" id="micButton">🎤</button>
 
     <script>
@@ -108,12 +106,12 @@
         conversationHistory.push({ speaker: 'user', message: userSpeech });
 
         const aiResponse = await getAiResponse(userSpeech);
-        addMessageToChatBox('ai', aiResponse.response);  // Accessing only the response part
+        addMessageToChatBox('ai', aiResponse.response);
         conversationHistory.push({ speaker: 'ai', message: aiResponse.response });
         if (aiResponse.redirect) {
             window.location.href = aiResponse.redirect;
         } else {
-            speak(aiResponse.response, handleSpeechRecognition);  // Accessing only the response part
+            speak(aiResponse.response, handleSpeechRecognition);
         }
     };
 
@@ -152,10 +150,10 @@
         };
         window.speechSynthesis.speak(utterance);
     }
+
     window.onload = () => {
         startConversation();
     };
-</script>
-
+    </script>
 </body>
 </html>
