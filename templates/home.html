@@ -252,6 +252,53 @@
                 transform: scale(5) translate(100px, 100px);
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 6;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border: 1px solid #8a2be2;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .modal-content h2 {
+            color: #8a2be2;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            margin: 10px 0;
+        }
+
+        .close-btn {
+            background-color: #8a2be2;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #7a24c9;
+        }
     </style>
 </head>
 <body>
@@ -265,12 +312,12 @@
     </div>
     <nav class="navbar">
         <div class="logo">
-            <a href="#">IntervWAI</a>
+            <a href="#" onclick="loadHome()">IntervWAI</a>
         </div>
         <div>
-            <a href="#">Home</a>
-            <a href="{{url_for('about')}}">About</a>
-            <a href="#">Contact</a>
+            <a href="#" onclick="loadHome()">Home</a>
+            <a href="#" onclick="openModal('about')">About</a>
+            <a href="#" onclick="openModal('contact')">Contact</a>
         </div>
     </nav>
     <div class="rocket"></div>
@@ -287,6 +334,25 @@
 <!--            <button class="btn" onclick="location.href='{{url_for('chatbot')}}'">Submit Written Answers</button>-->
         </div>
     </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <h2>About IntervWAI</h2>
+            <p>IntervWAI is an AI-powered platform designed to help you ace your interviews by providing live interview simulations, performance evaluations, feedback reports, and best-answer suggestions for interview questions.</p>
+            <button class="close-btn" onclick="closeModal('about')">Close</button>
+        </div>
+    </div>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <h2>Contact Developer</h2>
+            <p>Name: Jitesh Bansal</p>
+            <p>Email: jiteshbansal41@gmail.com</p>
+            <p>Phone: 8302244632</p>
+            <button class="close-btn" onclick="closeModal('contact')">Close</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const gate = document.querySelector(".gate");
@@ -324,6 +390,18 @@
 
         function startInterview() {
             location.href = "{{url_for('sI')}}";
+        }
+
+        function loadHome() {
+            location.reload();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId + "Modal").style.display = "flex";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId + "Modal").style.display = "none";
         }
     </script>
 </body>
