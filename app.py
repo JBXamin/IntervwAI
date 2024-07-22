@@ -35,7 +35,7 @@ except DefaultCredentialsError as e:
 qsns = 0
 conversation_history = []
 responses = []
-generated_questions = []
+generated_questions = ['hi, what is your name and why are you here?']
 
 interview_results = {}
 
