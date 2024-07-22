@@ -3,6 +3,7 @@ import os
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
+from google.auth.exceptions import DefaultCredentialsError
 
 app = Flask(__name__)
 CORS(app)
@@ -10,18 +11,25 @@ CORS(app)
 # Set the path to the credentials.json file
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 
+# Check if the credentials file exists
+if not os.path.isfile(SERVICE_ACCOUNT_FILE):
+    print(f"Error: The file {SERVICE_ACCOUNT_FILE} does not exist.")
+else:
+    try:
+        with open(SERVICE_ACCOUNT_FILE) as f:
+            credentials = json.load(f)
+        # Set the environment variable for Google Application Default Credentials
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
+    except json.JSONDecodeError as e:
+        print(f"Error: File {SERVICE_ACCOUNT_FILE} is not a valid JSON file. Details: {e}")
+        credentials = None
+
+# Check if credentials are loaded successfully
 try:
-    with open(SERVICE_ACCOUNT_FILE) as f:
-        credentials = json.load(f)
-except json.JSONDecodeError as e:
-    print(f"Error: File {SERVICE_ACCOUNT_FILE} is not a valid JSON file. Details: {e}")
-    credentials = None
-
-if credentials:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
-
-# Set the API key from the environment variable
-genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
+    if credentials:
+        genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
+except DefaultCredentialsError as e:
+    print(f"Error: {e}")
 
 qsns = 0
 conversation_history = []
