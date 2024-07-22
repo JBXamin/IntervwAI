@@ -85,7 +85,11 @@ def gemini():
         return jsonify({'response': 'No message provided'}), 400
 
     try:
-        current_question = questions[qsns]
+        if qsns < len(questions):
+            current_question = questions[qsns]
+        else:
+            current_question = questions[0]
+
         conversation_history.append(f"ai: {current_question}")
         ai_response = generate_response(user_message)
         conversation_history.append(f"user: {user_message}")
