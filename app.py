@@ -4,6 +4,7 @@ import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
 from google.auth.exceptions import DefaultCredentialsError
+from uuid import uuid4
 
 app = Flask(__name__)
 CORS(app)
