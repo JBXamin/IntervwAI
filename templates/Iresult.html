@@ -87,13 +87,11 @@
             console.error('Failed to parse responses:', error);
             responses = [];
         }
-
-        if (responses.length > 1) {
+        function calculateFinalResult() {
             let totalRating = 0;
             let responseCount = 0;
             let combinedEvaluation = '';
-
-            responses.slice(1).forEach(response => {
+            responses.slice(1).forEach((response) => {
                 combinedEvaluation += response.evaluation.replace(/(\*\*|##|#\*)/g, (match) => {
                     switch (match) {
                         case '**':
@@ -125,6 +123,7 @@
             });
 
             const averageRating = totalRating / responseCount;
+
             let finalResult;
             if (averageRating >= 3.5) {
                 finalResult = 'Outstanding';
@@ -136,15 +135,15 @@
                 finalResult = 'Needs Improvement';
             }
 
-            document.getElementById('evaluation-report').innerHTML = `
-                <div class="evaluation-section">
-                    <div class="evaluation-title">Overall Evaluation:</div>
-                    <div class="evaluation-text"><p>${combinedEvaluation}</p></div>
-                </div>`;
-            document.getElementById('final-result').textContent = `Final Result: ${finalResult}`;
-        } else {
-            document.getElementById('evaluation-report').innerHTML = '<p>No responses found.</p>';
+            return { finalResult, combinedEvaluation };
         }
+        const { finalResult, combinedEvaluation } = calculateFinalResult();
+        document.getElementById('evaluation-report').innerHTML = `
+            <div class="evaluation-section">
+                <div class="evaluation-title">Overall Evaluation:</div>
+                <div class="evaluation-text"><p>${combinedEvaluation}</p></div>
+            </div>`;
+        document.getElementById('final-result').textContent = `Final Result: ${finalResult}`;
     </script>
 </body>
 </html>
