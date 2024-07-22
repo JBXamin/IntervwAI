@@ -145,7 +145,7 @@ def sI():
 @app.route('/result/<session_id>')
 def result(session_id):
     responses = interview_results.get(session_id, [])
-    return render_template('iresult.html', responses=responses)
+    return render_template('Iresult.html', responses=responses)
 
 if __name__ == '__main__':
     app.run(debug=True)
