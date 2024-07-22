@@ -9,7 +9,16 @@ CORS(app)
 
 # Set the path to the credentials.json file
 SERVICE_ACCOUNT_FILE = 'credentials.json'
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
+
+try:
+    with open(SERVICE_ACCOUNT_FILE) as f:
+        credentials = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"Error: File {SERVICE_ACCOUNT_FILE} is not a valid JSON file. Details: {e}")
+    credentials = None
+
+if credentials:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = SERVICE_ACCOUNT_FILE
 
 # Set the API key from the environment variable
 genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
