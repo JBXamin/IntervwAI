@@ -142,6 +142,9 @@ def askAns():
 def sI():
     return render_template('sI.html')
 
+def about():
+    return render_template('about.html')
+
 @app.route('/result/<session_id>')
 def result(session_id):
     responses = interview_results.get(session_id, [])
