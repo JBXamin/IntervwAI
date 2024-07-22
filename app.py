@@ -89,11 +89,12 @@ def gemini():
             qsns = 0
             conversation_history.clear()
             responses.clear()
+
+            redirect_url = url_for('result', session_id=session_id)
             return jsonify({
                 'response': ai_response,
-                'redirect': url_for('iresult', session_id=session_id)
+                'redirect': redirect_url
             })
-
         conversation_history = conversation_history[-1:]
 
         return jsonify({'response': ai_response})
@@ -124,10 +125,11 @@ def askAns():
 def sI():
     return render_template('sI.html')
 
-@app.route('/iresult/<session_id>')
-def iresult(session_id):
+@app.route('/result')
+def result():
+    session_id = request.args.get('session_id', '')
     responses = interview_results.get(session_id, [])
-    return render_template('iresult.html', responses=responses)
+    return render_template('Iresult.html', responses=responses)
 
 if __name__ == '__main__':
     app.run(debug=True)
