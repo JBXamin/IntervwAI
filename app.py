@@ -3,8 +3,10 @@ import os
 import google.generativeai as genai
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_cors import CORS
+from uuid import uuid4
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 CORS(app)
 
 # Set the path to the credentials.json file
@@ -17,6 +19,7 @@ genai.api_key = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik"
 qsns = 0
 conversation_history = []
 responses = []
+interview_results = {}
 
 questions = [
     "What is your greatest strength?",
@@ -81,15 +84,16 @@ def gemini():
 
         qsns += 1
         if qsns >= 3:
-            redirect_url = url_for('result', responses=json.dumps(responses))
+            session_id = str(uuid4())
+            interview_results[session_id] = responses.copy()
             qsns = 0
             conversation_history.clear()
             responses.clear()
-
             return jsonify({
                 'response': ai_response,
-                'redirect': redirect_url
+                'redirect': url_for('iresult', session_id=session_id)
             })
+
         conversation_history = conversation_history[-1:]
 
         return jsonify({'response': ai_response})
@@ -120,15 +124,10 @@ def askAns():
 def sI():
     return render_template('sI.html')
 
-@app.route('/result')
-def result():
-    responses = request.args.get('responses', '[]')
-    try:
-        responses = json.loads(responses)
-    except json.JSONDecodeError:
-        responses = []
-    print(f"Responses received: {responses}")  # Debug statement
-    return render_template('Iresult.html', responses=responses)
+@app.route('/iresult/<session_id>')
+def iresult(session_id):
+    responses = interview_results.get(session_id, [])
+    return render_template('iresult.html', responses=responses)
 
 if __name__ == '__main__':
     app.run(debug=True)
