@@ -100,7 +100,7 @@ def gemini():
         print(f"Response stored: {response_entry}")  # Debug statement
 
         qsns += 1
-        if qsns >= 11:
+        if qsns >= len(questions):
             session_id = str(uuid4())
             interview_results[session_id] = responses.copy()
             qsns = 0
@@ -112,6 +112,7 @@ def gemini():
                 'response': ai_response,
                 'redirect': redirect_url
             })
+
         conversation_history = conversation_history[-1:]
 
         return jsonify({'response': ai_response})
