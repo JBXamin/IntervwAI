@@ -29,6 +29,12 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Create credentials file from secret
+        env:
+          CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+        run: |
+          echo "$CREDENTIALS_JSON" > credentials.json
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
