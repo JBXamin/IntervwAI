@@ -35,7 +35,7 @@ except DefaultCredentialsError as e:
 qsns = 0
 conversation_history = []
 responses = []
-generated_questions = ['hi, what is your name and why are you here?']
+generated_questions = []
 
 interview_results = {}
 
@@ -95,10 +95,9 @@ def gemini():
             'evaluation': evaluation_text
         }
         responses.append(response_entry)
-        print(f"Response stored: {response_entry}")  # Debug statement
 
         qsns += 1
-        if qsns >= len(generated_questions):
+        if qsns >= 5:  # Assuming we want to ask 5 questions
             session_id = str(uuid4())
             interview_results[session_id] = responses.copy()
             qsns = 0
@@ -114,7 +113,7 @@ def gemini():
 
         conversation_history = conversation_history[-1:]
 
-        return jsonify({'response': ai_response})
+        return jsonify({'response': current_question})
     except Exception as e:
         return jsonify({'response': f'Error: {str(e)}'}), 500
 
