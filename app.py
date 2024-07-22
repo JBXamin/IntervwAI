@@ -39,12 +39,15 @@ generated_questions = []
 
 interview_results = {}
 
-def generate_response(query):
+INITIAL_PROMPT = "You are the interviewer in an interview. Ask me questions one by one."
+
+def generate_response(query, initial_prompt=INITIAL_PROMPT):
     global conversation_history
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
     current_conversation = "\n".join(conversation_history[-2:] + [f"user: {query}"])
-    response = model.generate_content(current_conversation)
+    full_prompt = f"{initial_prompt}\n{current_conversation}"
+    response = model.generate_content(full_prompt)
 
     text_content = response.candidates[0].content.parts[0].text
     conversation_history.append(f"ai: {text_content}")
