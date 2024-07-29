@@ -122,6 +122,8 @@ def gemini():
 
 @app.route('/')
 def home():
+    global qsns
+    qsns=0
     return render_template('home.html')
 
 @app.route('/login')
