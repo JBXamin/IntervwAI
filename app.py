@@ -124,6 +124,10 @@ def gemini():
 def home():
     global qsns
     qsns=0
+    conversation_history.clear()
+    responses.clear()
+    generated_questions.clear()
+    interview_results.clear()
     return render_template('home.html')
 
 @app.route('/login')
