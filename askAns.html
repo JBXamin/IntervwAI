@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntervWAI Chatbot</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(138, 43, 226, 0.3), rgba(0, 0, 0, 0.3));
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.5);
+            }
+        }
+
+        .navbar {
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: top 0.3s;
+        }
+
+        .navbar .logo a {
+            color: #8a2be2;
+            font-size: 1.5em;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar .logo a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .navbar a {
+            color: #8a2be2;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9em;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            flex-direction: column;
+            padding-top: 60px; /* Ensure content is below navbar */
+        }
+
+        .content h1 {
+            font-size: 3em;
+            color: #8a2be2;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 70vh;
+            background-color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px; /* Ensure scrollbar does not cover text */
+        }
+
+        .chat-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background-color: #8a2be2;
+        }
+
+        .chat-message.bot {
+            align-self: flex-start;
+            background-color: #666;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .chat-input-container {
+            display: flex;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        .chat-send {
+            padding: 10px 20px;
+            border: none;
+            background-color: #8a2be2;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-send:hover {
+            background-color: #7a24c9;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="animation"></div>
+    <div class="stars">
+        <div class="star" style="top: 10%; left: 20%; animation-duration: 2s;"></div>
+        <div class="star" style="top: 40%; left: 60%; animation-duration: 3s;"></div>
+        <div class="star" style="top: 70%; left: 30%; animation-duration: 4s;"></div>
+        <div class="star" style="top: 80%; left: 80%; animation-duration: 5s;"></div>
+        <div class="star" style="top: 50%; left: 50%; animation-duration: 6s;"></div>
+    </div>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="#">IntervWAI</a>
+        </div>
+        <div>
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+    <div class="content">
+        <div>
+            <h1>Chat with IntervWAI</h1>
+            <div class="chat-container">
+                <div class="chat-box" id="chat-box">
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
+                    <button class="chat-send" id="chat-send">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+        const API_KEY = "AIzaSyDcw5qJwF3KkDNZI2cG_9vVvCDjLLMXGik";
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const chatBox = document.getElementById('chat-box');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        let chatHistory = [];
+        function appendMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', sender);
+
+            const formattedMessage = message.replace(/\n/g, '<br>');
+
+            if (sender === 'bot') {
+                messageElement.innerHTML = `
+                    <div class="bot-text">${formattedMessage}</div>
+                `;
+            } else {
+                messageElement.innerHTML = formattedMessage;
+            }
+
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        async function getBotResponse(userMessage) {
+            chatHistory.push({ sender: 'user', text: userMessage });
+            const conversationHistory = chatHistory.map(entry => `${entry.sender}: ${entry.text}`).join('\n');
+
+            try {
+                const result = await model.generateContent(conversationHistory);
+                const response = await result.response;
+                const text = await response.text();
+                chatHistory.push({ sender: 'bot', text });
+                appendMessage('bot', text);
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage('bot', 'Sorry, something went wrong.');
+            }
+        }
+        async function sendInitialMessage() {
+            const initialMessage = "Hello! Please start the conversation directly by saying thanks for choosing IntervwAI and here you can ask me any question of interview I will try my best to give the best possble answer. Just give the best possible answer nothing more for interview purpose only.";
+            try {
+                const result = await model.generateContent(initialMessage);
+                const response = await result.response;
+                const text = await response.text();
+                chatHistory.push({ sender: 'bot', text });
+                appendMessage('bot', text);
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage('bot', 'Sorry, something went wrong.');
+            }
+        }
+        chatSend.addEventListener('click', () => {
+            const userMessage = chatInput.value.trim();
+            const additionalText = ". Give me best answer for this question if it is asked in interview.";
+            if (userMessage) {
+                const messageToSend = userMessage + ' ' + additionalText;
+                appendMessage('user', userMessage);
+                chatInput.value = '';
+                getBotResponse(messageToSend);
+            }
+        });
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                chatSend.click();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            sendInitialMessage();
+        });
+    </script>
+</body>
+</html>
