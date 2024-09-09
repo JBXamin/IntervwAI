@@ -75,85 +75,102 @@
     <button class="mic-button" id="micButton">🎤</button>
 
     <script>
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-    const micButton = document.getElementById('micButton');
-    const chatBox = document.getElementById('chatBox');
+        const micButton = document.getElementById('micButton');
+        const chatBox = document.getElementById('chatBox');
 
-    let isListening = false;
-    let conversationHistory = [];
-    let questionCount = 0;
+        let isListening = false;
+        let conversationHistory = [];
+        let questionCount = 0;
 
-    const startConversation = async () => {
-        const initialResponse = await getAiResponse("Hello, start the conversation directly by starting an interview in which you will be the interviewer and I am going to be the employee. Ask me questions one by one.");
-        addMessageToChatBox('ai', initialResponse.response);
-        speak(initialResponse.response, handleSpeechRecognition);
-    };
-
-    const handleSpeechRecognition = () => {
-        recognition.start();
-        micButton.classList.add('mic-button-listening');
-    };
-
-    recognition.onresult = async (event) => {
-        const userSpeech = event.results[0][0].transcript;
-        addMessageToChatBox('user', userSpeech);
-        conversationHistory.push({ speaker: 'user', message: userSpeech });
-
-        const aiResponse = await getAiResponse(userSpeech);
-        addMessageToChatBox('ai', aiResponse.response);
-        conversationHistory.push({ speaker: 'ai', message: aiResponse.response });
-        if (aiResponse.redirect) {
-            window.location.href = aiResponse.redirect;
-        } else {
-            speak(aiResponse.response, handleSpeechRecognition);
-        }
-    };
-
-    recognition.onend = () => {
-        micButton.classList.remove('mic-button-listening');
-        isListening = false;
-    };
-
-    function addMessageToChatBox(sender, message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = `chat-message ${sender}`;
-        messageElement.textContent = message;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    async function getAiResponse(userSpeech) {
-        const history = conversationHistory.map(entry => `${entry.speaker}: ${entry.message}`).join('\n');
-        const response = await fetch('/api/gemini', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message: `${history}\nuser: ${userSpeech}` })
-        });
-
-        const data = await response.json();
-        return data;
-    }
-
-    function speak(message, callback) {
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
-        utterance.onend = () => {
-            callback();
+        const startConversation = async () => {
+            const initialResponse = await getAiResponse("Hello, start the conversation directly by starting an interview in which you will be the interviewer and I am going to be the employee. Ask me questions one by one.");
+            if (initialResponse && initialResponse.response && initialResponse.response.question) {
+                addMessageToChatBox('ai', initialResponse.response.question);
+                speak(initialResponse.response.question, handleSpeechRecognition);
+            }
         };
-        window.speechSynthesis.speak(utterance);
-    }
 
-    window.onload = () => {
-        startConversation();
-    };
+        const handleSpeechRecognition = () => {
+            recognition.start();
+            micButton.classList.add('mic-button-listening');
+        };
+
+        recognition.onresult = async (event) => {
+            const userSpeech = event.results[0][0].transcript;
+            addMessageToChatBox('user', userSpeech);
+            conversationHistory.push({ speaker: 'user', message: userSpeech });
+
+            const aiResponse = await getAiResponse(userSpeech);
+            if (aiResponse && aiResponse.response) {
+                addMessageToChatBox('ai', aiResponse.response.question);
+                conversationHistory.push({ speaker: 'ai', message: aiResponse.response.question });
+
+                if (aiResponse.response.redirect) {
+                    console.log('Redirecting to result page:', aiResponse.response.redirect); // Log redirect URL
+                    window.location.href = aiResponse.response.redirect; // Redirect to the results page
+                } else {
+                    speak(aiResponse.response.question, handleSpeechRecognition);
+                }
+            }
+        };
+
+        recognition.onend = () => {
+            micButton.classList.remove('mic-button-listening');
+            isListening = false;
+        };
+
+        function addMessageToChatBox(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-message ${sender}`;
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function getAiResponse(userSpeech) {
+            const history = conversationHistory.map(entry => `${entry.speaker}: ${entry.message}`).join('\n');
+            try {
+                const response = await fetch('/call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: `${history}\nuser: ${userSpeech}` })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log('Received response from /call:', data); // Log the full response for debugging
+                return data;
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+                alert('An error occurred while communicating with the server.');
+            }
+        }
+
+        function speak(message, callback) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'en-US';
+            utterance.onend = () => {
+                callback();
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        window.onload = () => {
+            startConversation();
+        };
     </script>
+
 </body>
 </html>
